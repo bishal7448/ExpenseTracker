@@ -2,10 +2,11 @@ package org.example.services;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.example.entities.UserInfo;
 import org.example.models.UserInfoDto;
+import org.example.producer.UserInfoProducer;
 import org.example.repositories.UserRepository;
-import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,12 +21,16 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 @Data
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserInfoProducer userInfoProducer;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -46,12 +51,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         String userId = UUID.randomUUID().toString();
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserId(userId);
-        userInfo.setUserName(userInfoDto.getUserName());
-        userInfo.setPassword(encodedPassword);
-        userInfo.setRoles(new HashSet<>());
+
+        UserInfo userInfo = UserInfo.builder()
+                .userId(userId)
+                .userName(userInfoDto.getUserName())
+                .password(encodedPassword)
+                .roles(new HashSet<>()).build();
         userRepository.save(userInfo);
+
+        userInfoDto.setUserId(userId);
+
+        // push event into Kafka
+        try {
+            userInfoProducer.sendEventToKafka(userInfoDto);
+        } catch (Exception ex) {
+            log.error("Error sending user signup event to Kafka: ", ex);
+        }
+
         return true;
     }
 }

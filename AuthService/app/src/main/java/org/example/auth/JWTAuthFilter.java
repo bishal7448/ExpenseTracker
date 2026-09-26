@@ -21,6 +21,7 @@ import java.io.IOException;
 
 @Component
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 public class JWTAuthFilter extends OncePerRequestFilter {
     @Autowired

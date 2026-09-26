@@ -26,6 +26,7 @@ public class UserInfo {
 
     private String password;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

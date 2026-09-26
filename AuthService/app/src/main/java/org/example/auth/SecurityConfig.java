@@ -1,6 +1,7 @@
 package org.example.auth;
 
 import lombok.Data;
+import org.example.producer.UserInfoProducer;
 import org.example.repositories.UserRepository;
 import org.example.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,12 @@ public class SecurityConfig {
     @Autowired
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
+    @Autowired
+    private UserInfoProducer userInfoProducer;
+
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return new UserDetailsServiceImpl(userRepository, passwordEncoder);
+        return new UserDetailsServiceImpl(userRepository, passwordEncoder, userInfoProducer);
     }
 
     @Bean

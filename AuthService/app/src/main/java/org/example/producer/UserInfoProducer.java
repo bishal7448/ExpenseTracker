@@ -1,4 +1,4 @@
-package org.example.eventProducer;
+package org.example.producer;
 
 import org.example.models.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ public class UserInfoProducer {
     @Value("${spring.kafka.topic.name}")
     private String TOPIC_NAME;
 
-    @Autowired
     public UserInfoProducer(KafkaTemplate<String, UserInfoDto> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }

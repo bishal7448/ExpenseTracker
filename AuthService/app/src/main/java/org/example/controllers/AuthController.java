@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.entities.RefreshToken;
 import org.example.models.UserInfoDto;
 import org.example.responses.JWTResponseDTO;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
+@Slf4j
 public class AuthController {
     @Autowired
     private JWTService jwtService;
@@ -38,7 +40,8 @@ public class AuthController {
             return new ResponseEntity<>(JWTResponseDTO.builder().accessToken(jwtToken).
                     token(refreshToken.getToken()).build(), HttpStatus.OK);
         }catch(Exception ex) {
-            return new ResponseEntity<>("Exception in User Service", HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Exception during signup process: ", ex);
+            return new ResponseEntity<>("Exception in User Service: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

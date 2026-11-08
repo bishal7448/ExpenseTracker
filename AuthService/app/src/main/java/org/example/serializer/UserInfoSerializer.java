@@ -1,25 +1,28 @@
 package org.example.serializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
-import org.example.models.UserInfoDto;
+import org.example.producer.UserInfoEvent;
 
 import java.util.Map;
 
-public class UserInfoSerializer implements Serializer<UserInfoDto> {
-    @Override
-    public byte[] serialize(String key, UserInfoDto data) {
-        byte[] bytes = null;
-        ObjectMapper mapper = new ObjectMapper();
+public class UserInfoSerializer implements Serializer<UserInfoEvent> {
 
-        try {
-            bytes = mapper.writeValueAsString(data).getBytes();
-        }catch (Exception e){
-            e.printStackTrace();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    @Override
+    public byte[] serialize(String topic, UserInfoEvent data) {
+        if (data == null) {
+            return null;
         }
 
-        return bytes;
+        try {
+            return OBJECT_MAPPER.writeValueAsString(data).getBytes();
+        } catch (Exception e) {
+            throw new SerializationException("Error serializing UserInfoEvent to JSON for topic: " + topic, e);
+        }
     }
 
     @Override
@@ -28,8 +31,8 @@ public class UserInfoSerializer implements Serializer<UserInfoDto> {
     }
 
     @Override
-    public byte[] serialize(String topic, Headers headers, UserInfoDto data) {
-        return Serializer.super.serialize(topic, headers, data);
+    public byte[] serialize(String topic, Headers headers, UserInfoEvent data) {
+        return serialize(topic, data);
     }
 
     @Override

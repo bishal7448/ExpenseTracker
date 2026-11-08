@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entities.UserInfo;
 import org.example.models.UserInfoDto;
+import org.example.producer.UserInfoEvent;
 import org.example.producer.UserInfoProducer;
 import org.example.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,15 +60,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .roles(new HashSet<>()).build();
         userRepository.save(userInfo);
 
-        userInfoDto.setUserId(userId);
+//        userInfoDto.setUserId(userId);
 
         // push event into Kafka
         try {
-            userInfoProducer.sendEventToKafka(userInfoDto);
+            userInfoProducer.sendEventToKafka(userInfoEventToPublish(userInfoDto, userId));
         } catch (Exception ex) {
             log.error("Error sending user signup event to Kafka: ", ex);
         }
 
         return true;
+    }
+
+    private UserInfoEvent userInfoEventToPublish(UserInfoDto userInfoDto, String userId) {
+        return UserInfoEvent.builder()
+                .userId(userId)
+                .firstName(userInfoDto.getFirstName())
+                .lastName(userInfoDto.getLastName())
+                .email(userInfoDto.getEmail())
+                .phoneNumber(userInfoDto.getPhoneNumber())
+                .build();
     }
 }

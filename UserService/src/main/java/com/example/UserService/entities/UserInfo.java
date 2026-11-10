@@ -13,8 +13,8 @@ import lombok.*;
 @Table(name = "users")
 public class UserInfo {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private Long id;
 
     @Id
     @NonNull

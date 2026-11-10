@@ -25,15 +25,9 @@ public class UserInfoProducer {
     }
 
     public CompletableFuture<SendResult<String, UserInfoEvent>> sendEventToKafka(UserInfoEvent eventData) {
-        Message<UserInfoEvent> message = MessageBuilder
-                .withPayload(eventData)
-                .setHeader(KafkaHeaders.TOPIC, topicName)
-                .setHeader(KafkaHeaders.KEY, eventData.getUserId())
-                .build();
-
         log.info("Publishing UserInfoEvent for userId: {} to topic: {}", eventData.getUserId(), topicName);
 
-        CompletableFuture<SendResult<String, UserInfoEvent>> future = kafkaTemplate.send(message);
+        CompletableFuture<SendResult<String, UserInfoEvent>> future = kafkaTemplate.send(topicName, eventData.getUserId(), eventData);
         future.whenComplete((result, ex) -> {
             if (ex != null) {
                 log.error("Failed to send UserInfoEvent to Kafka topic {} for userId {}: {}",

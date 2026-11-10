@@ -12,10 +12,9 @@ public class AuthServiceConsumer {
     @Autowired
     private UserService userService;
 
-    @KafkaListener(
-            topics = "${spring.kafka.topic.name}",
-            groupId = "${spring.kafka.consumer.group-id}"
-    )
+    @KafkaListener(topics = "${spring.kafka.topic.name}",
+            groupId = "${spring.kafka.consumer.group-id}",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consume(UserInfoDto eventData) {
         try {
             userService.createOrUpdateUser(eventData);
@@ -23,6 +22,5 @@ public class AuthServiceConsumer {
             e.printStackTrace();
         }
     }
-
 }
 

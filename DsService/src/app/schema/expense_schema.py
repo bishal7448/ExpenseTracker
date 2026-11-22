@@ -1,0 +1,9 @@
+from pydantic import BaseModel, Field
+from typing import Optional
+
+
+class Expense(BaseModel):
+    amount: Optional[str] = Field(title="expense", description="Expense made on the transaction")
+    merchant: Optional[str] = Field(title="merchant", description="Marchant name whom the transaction has been made")
+    currency: Optional[str] = Field(title="currency", description="Currency of the transaction")
+    

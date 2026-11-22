@@ -1,0 +1,30 @@
+﻿{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Run Flask Service",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/app/__init__.py",
+            "cwd": "${workspaceFolder}/src/app",
+            "envFile": "${workspaceFolder}/src/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src/app"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}/src/app",
+            "envFile": "${workspaceFolder}/src/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src/app"
+            },
+            "console": "integratedTerminal"
+        }
+    ]
+}

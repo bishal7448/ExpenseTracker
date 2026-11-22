@@ -1,0 +1,10 @@
+﻿{
+    "python.defaultInterpreterPath": "${workspaceFolder}/dsenv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src/app"
+    ],
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/src/app"
+    ]
+}
